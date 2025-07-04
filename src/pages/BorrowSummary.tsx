@@ -10,31 +10,21 @@ const BorrowSummary = () => {
   const { data: borrowsData, isLoading, error } = useGetBorrowsQuery();
 
   // Extract borrows from the API response structure
-  const borrows: IBorrow[] = (() => {
-    if (Array.isArray(borrowsData)) {
-      return borrowsData;
-    }
-    if (borrowsData && typeof borrowsData === 'object' && 'data' in borrowsData) {
-      return Array.isArray(borrowsData.data) ? borrowsData.data : [];
-    }
-    return [];
-  })();
+  const borrows: IBorrow[] = borrowsData?.data || [];
 
   // Debug logging
   console.log('borrowsData:', borrowsData);
   console.log('borrows (processed):', borrows);
   console.log('isArray(borrows):', Array.isArray(borrows));
 
-  const activeBorrows = borrows.filter((borrow: IBorrow) => !borrow.returned);
-  const returnedBorrows = borrows.filter((borrow: IBorrow) => borrow.returned);
+  const activeBorrows = borrows.filter((borrow: IBorrow) => borrow.status === 'active');
+  console.log('activeBorrows:', activeBorrows);
+  const returnedBorrows = borrows.filter((borrow: IBorrow) => borrow.status === 'returned');
   const overdueBorrows = borrows.filter((borrow: IBorrow) => 
-    new Date(borrow.returnDate) < new Date() && !borrow.returned
+    new Date(borrow.dueDate) < new Date() && borrow.status === 'active'
   );
 
-  const totalBorrowed = borrows.reduce((sum: number, borrow: IBorrow) => {
-    const borrowedCopies = borrow.borrowedCopies || 0;
-    return sum + borrowedCopies;
-  }, 0);
+  const totalBorrowed = borrows.reduce((sum: number, borrow: IBorrow) => sum + borrow.quantity, 0);
 
   if (isLoading) {
     return (

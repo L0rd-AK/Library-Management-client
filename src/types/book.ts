@@ -7,6 +7,8 @@ export interface IBook {
     isbn: string;
     description: string;
     available: boolean;
+    createdAt?: string;
+    updatedAt?: string;
   }
 
 export interface IPagination{

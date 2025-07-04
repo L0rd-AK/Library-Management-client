@@ -1,16 +1,14 @@
+import type { IBook } from "./book";
+
 export interface IBorrow {
     _id?: string;
-    bookId: string;
-    bookTitle: string;
-    author: string;
-    genre: string;
-    copies: number;
-    isbn: string;
-    available: boolean;
-    borrowDate: string;
-    returnDate: string;
-    returned: boolean;
-    borrowedCopies: number;
+    book: IBook;
+    quantity: number;
+    dueDate: string;
+    status: 'active' | 'returned' | 'overdue';
+    returnedDate?: string | null;
+    createdAt?: string;
+    updatedAt?: string;
   }
   
   export interface IBorrowSummary {
