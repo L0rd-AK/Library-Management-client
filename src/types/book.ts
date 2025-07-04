@@ -1,5 +1,5 @@
 export interface IBook {
-    _id: string;
+    _id?: string;
     title: string;
     author: string;
     genre: string;
@@ -8,4 +8,10 @@ export interface IBook {
     description: string;
     available: boolean;
   }
-  
+
+export interface IPagination{
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalItems: number;
+}

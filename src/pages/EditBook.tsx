@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetBookByIdQuery, useUpdateBookMutation } from '@/redux/features/api/booksApi';
+import { useGetBookByIdQuery, useUpdateBookMutation } from '@/redux/featurs/api/booksApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

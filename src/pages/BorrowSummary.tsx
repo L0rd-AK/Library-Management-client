@@ -1,30 +1,22 @@
-import { useGetBorrowSummaryQuery } from '@/redux/features/api/borrowApi';
+import { useSelector } from 'react-redux';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, ArrowLeft } from 'lucide-react';
+import { BookOpen, ArrowLeft, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import BorrowCard from '@/components/modules/Borrow/BorrowCard';
+import { type IBorrow } from '@/types';
+import { type RootState } from '@/redux/store';
 
 const BorrowSummary = () => {
-  const { data: borrowSummary = [], isLoading, error } = useGetBorrowSummaryQuery();
+  const borrows = useSelector((state: RootState) => state.borrow.borrows);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-lg">Loading borrow summary...</div>
-      </div>
-    );
-  }
+  const activeBorrows = borrows.filter((borrow: IBorrow) => !borrow.returned);
+  const returnedBorrows = borrows.filter((borrow: IBorrow) => borrow.returned);
+  const overdueBorrows = borrows.filter((borrow: IBorrow) => 
+    new Date(borrow.returnDate) < new Date() && !borrow.returned
+  );
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-lg text-red-600">Error loading borrow summary. Please try again.</div>
-      </div>
-    );
-  }
-
-  const totalBorrowed = borrowSummary.reduce((sum, item) => sum + item.totalQuantityBorrowed, 0);
+  const totalBorrowed = borrows.reduce((sum: number, borrow: IBorrow) => sum + borrow.borrowedCopies, 0);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -39,7 +31,7 @@ const BorrowSummary = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
@@ -47,8 +39,8 @@ const BorrowSummary = () => {
                 <BookOpen className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Books Borrowed</p>
-                <p className="text-2xl font-bold text-gray-900">{borrowSummary.length}</p>
+                <p className="text-sm font-medium text-gray-500">Total Borrows</p>
+                <p className="text-2xl font-bold text-gray-900">{borrows.length}</p>
               </div>
             </div>
           </CardContent>
@@ -61,7 +53,7 @@ const BorrowSummary = () => {
                 <BookOpen className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Copies Borrowed</p>
+                <p className="text-sm font-medium text-gray-500">Total Copies</p>
                 <p className="text-2xl font-bold text-gray-900">{totalBorrowed}</p>
               </div>
             </div>
@@ -71,62 +63,80 @@ const BorrowSummary = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <BookOpen className="h-6 w-6 text-purple-600" />
+              <div className="p-2 bg-yellow-100 rounded-lg">
+                <BookOpen className="h-6 w-6 text-yellow-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Active Borrows</p>
-                <p className="text-2xl font-bold text-gray-900">{borrowSummary.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{activeBorrows.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-red-100 rounded-lg">
+                <Clock className="h-6 w-6 text-red-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Overdue</p>
+                <p className="text-2xl font-bold text-gray-900">{overdueBorrows.length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Borrow Summary Table */}
-      <Card>
+      {/* Active Borrows */}
+      <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Borrowed Books Summary</CardTitle>
+          <CardTitle>Active Borrows</CardTitle>
           <CardDescription>
-            Overview of all books that have been borrowed from the library.
+            Books currently borrowed and not yet returned.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {borrowSummary.length === 0 ? (
+          {activeBorrows.length === 0 ? (
             <div className="text-center py-12">
               <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Books Borrowed</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Active Borrows</h3>
               <p className="text-gray-500 mb-4">
-                There are currently no books borrowed from the library.
+                There are currently no active book borrows.
               </p>
               <Link to="/">
                 <Button>Browse Books</Button>
               </Link>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Book Title</TableHead>
-                  <TableHead>ISBN</TableHead>
-                  <TableHead className="text-right">Total Quantity Borrowed</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {borrowSummary.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{item.bookTitle}</TableCell>
-                    <TableCell>{item.isbn}</TableCell>
-                    <TableCell className="text-right font-semibold">
-                      {item.totalQuantityBorrowed}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="space-y-4">
+              {activeBorrows.map((borrow: IBorrow) => (
+                <BorrowCard key={borrow._id} borrow={borrow} />
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Returned Borrows */}
+      {returnedBorrows.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Returned Books</CardTitle>
+            <CardDescription>
+              Books that have been returned to the library.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {returnedBorrows.map((borrow: IBorrow) => (
+                <BorrowCard key={borrow._id} borrow={borrow} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
