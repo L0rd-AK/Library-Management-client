@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+const genreOptions = [
+  { value: "fiction", label: "Fiction" },
+  { value: "non-fiction", label: "Non-Fiction" },
+  { value: "mystery", label: "Mystery" },
+  { value: "romance", label: "Romance" },
+  { value: "science-fiction", label: "Science Fiction" },
+  { value: "fantasy", label: "Fantasy" },
+  { value: "biography", label: "Biography" },
+  { value: "history", label: "History" },
+  { value: "self-help", label: "Self-Help" },
+  { value: "other", label: "Other" },
+];
 const createBookSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   author: z.string().min(1, 'Author is required'),
@@ -30,6 +42,7 @@ const CreateBook = () => {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<CreateBookFormData>({
     resolver: zodResolver(createBookSchema),
     defaultValues: {
@@ -100,10 +113,23 @@ const CreateBook = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="genre">Genre *</Label>
-                  <Input
-                    id="genre"
-                    {...register('genre')}
-                    placeholder="Enter genre"
+                  <Controller
+                    name="genre"
+                    control={control}
+                    render={({ field }) => (
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger id="genre" className="w-full">
+                          <SelectValue placeholder="Select genre…" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {genreOptions.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                   {errors.genre && (
                     <p className="text-sm text-red-600">{errors.genre.message}</p>

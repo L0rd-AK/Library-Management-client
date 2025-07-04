@@ -1,5 +1,5 @@
 export interface IBorrow {
-    _id: string;
+    _id?: string;
     bookId: string;
     bookTitle: string;
     author: string;

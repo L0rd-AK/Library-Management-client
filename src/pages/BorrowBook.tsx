@@ -2,10 +2,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectBooks } from '@/redux/featurs/book/bookSlice';
-import { addBorrow } from '@/redux/featurs/borrow/borrowSlice';
-import { updateBookAvailability } from '@/redux/featurs/book/bookSlice';
+import { useGetBooksQuery } from '@/redux/featurs/api/booksApi';
+import { useBorrowBookMutation } from '@/redux/featurs/api/borrowApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,8 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format, addDays } from 'date-fns';
-import { useAppDispatch } from '@/redux/hooks';
-import { v4 as uuid } from 'uuid';
 
 const borrowBookSchema = z.object({
   quantity: z.number().min(1, 'Quantity must be at least 1'),
@@ -33,9 +29,11 @@ type BorrowBookFormData = z.infer<typeof borrowBookSchema>;
 
 const BorrowBook = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const { bookId } = useParams<{ bookId: string }>();
-  const books = useSelector(selectBooks);
+  const { data: booksData } = useGetBooksQuery();
+  const [borrowBook, { isLoading }] = useBorrowBookMutation();
+  
+  const books = booksData?.data || [];
   const book = books.find(b => b._id === bookId);
 
   const {
@@ -63,29 +61,12 @@ const BorrowBook = () => {
     }
 
     try {
-      // Add borrow record
-      const borrowData = {
-        _id: uuid(),
-        bookId: book._id,
-        bookTitle: book.title,
-        author: book.author,
-        genre: book.genre,
-        copies: book.copies,
-        isbn: book.isbn,
-        available: book.available,
-        borrowDate: new Date().toISOString(),
-        returnDate: new Date(data.dueDate).toISOString(),
-        returned: false,
-        borrowedCopies: data.quantity,
-      };
-
-      dispatch(addBorrow(borrowData));
-      
-      // Update book availability
-      dispatch(updateBookAvailability({
-        _id: book._id,
-        quantity: data.quantity
-      }));
+      // Send borrow request to API
+      await borrowBook({
+        bookId: book._id as string,
+        quantity: data.quantity,
+        dueDate: data.dueDate
+      }).unwrap();
       
       navigate('/borrow-summary');
     } catch (error) {
@@ -222,8 +203,8 @@ const BorrowBook = () => {
                 </div>
 
                 <div className="flex gap-4">
-                  <Button type="submit" className="flex-1">
-                    Borrow Book
+                  <Button type="submit" className="flex-1" disabled={isLoading}>
+                    {isLoading ? 'Borrowing...' : 'Borrow Book'}
                   </Button>
                   <Link to="/" className="flex-1">
                     <Button type="button" variant="outline" className="w-full">

@@ -26,7 +26,7 @@ export const BookList = () => {
   const handleDeleteConfirm = async () => {
     if (bookToDelete) {
       try {
-        await deleteBook(bookToDelete._id).unwrap();
+        await deleteBook(bookToDelete?._id as string).unwrap();
         setDeleteDialogOpen(false);
         setBookToDelete(null);
       } catch (error) {
@@ -62,7 +62,7 @@ export const BookList = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Library Books</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Books</h1>
         <AddBookModal />
       </div>
 

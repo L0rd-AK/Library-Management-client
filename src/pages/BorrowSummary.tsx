@@ -1,14 +1,29 @@
-import { useSelector } from 'react-redux';
+import { useGetBorrowsQuery } from '@/redux/featurs/api/borrowApi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, ArrowLeft, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import BorrowCard from '@/components/modules/Borrow/BorrowCard';
 import { type IBorrow } from '@/types';
-import { type RootState } from '@/redux/store';
 
 const BorrowSummary = () => {
-  const borrows = useSelector((state: RootState) => state.borrow.borrows);
+  const { data: borrowsData, isLoading, error } = useGetBorrowsQuery();
+
+  // Extract borrows from the API response structure
+  const borrows: IBorrow[] = (() => {
+    if (Array.isArray(borrowsData)) {
+      return borrowsData;
+    }
+    if (borrowsData && typeof borrowsData === 'object' && 'data' in borrowsData) {
+      return Array.isArray(borrowsData.data) ? borrowsData.data : [];
+    }
+    return [];
+  })();
+
+  // Debug logging
+  console.log('borrowsData:', borrowsData);
+  console.log('borrows (processed):', borrows);
+  console.log('isArray(borrows):', Array.isArray(borrows));
 
   const activeBorrows = borrows.filter((borrow: IBorrow) => !borrow.returned);
   const returnedBorrows = borrows.filter((borrow: IBorrow) => borrow.returned);
@@ -16,7 +31,34 @@ const BorrowSummary = () => {
     new Date(borrow.returnDate) < new Date() && !borrow.returned
   );
 
-  const totalBorrowed = borrows.reduce((sum: number, borrow: IBorrow) => sum + borrow.borrowedCopies, 0);
+  const totalBorrowed = borrows.reduce((sum: number, borrow: IBorrow) => {
+    const borrowedCopies = borrow.borrowedCopies || 0;
+    return sum + borrowedCopies;
+  }, 0);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center items-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading borrow summary...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-12">
+          <h3 className="text-lg font-medium text-red-600 mb-2">Error loading borrow summary</h3>
+          <p className="text-gray-600">Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

@@ -7,7 +7,7 @@ export const borrowApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api' }), // Update with your API base URL
   tagTypes: ['Borrows', 'Books'],
   endpoints: (builder) => ({
-    getBorrows: builder.query<IBorrow[], void>({
+    getBorrows: builder.query<{ success: boolean; data: IBorrow[]; pagination: { page: number; limit: number; total: number; totalPages: number; hasNext: boolean } }, void>({
       query: () => '/borrows',
       providesTags: ['Borrows'],
     }),
