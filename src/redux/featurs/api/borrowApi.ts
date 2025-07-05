@@ -5,7 +5,7 @@ import { booksApi } from './booksApi';
 // Define a service using a base URL and expected endpoints
 export const borrowApi = createApi({
   reducerPath: 'borrowApi',
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_BaseUrl || 'http://localhost:5000/api' }),
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_BaseUrl || 'https://library-management-rtk-server.vercel.app/api' }),
   tagTypes: ['Borrows', 'Books'],
   endpoints: (builder) => ({
     getBorrows: builder.query<{ success: boolean; data: IBorrow[]; pagination: { page: number; limit: number; total: number; totalPages: number; hasNext: boolean } }, void>({
