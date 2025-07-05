@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { BookOpen, Plus, BarChart3 } from 'lucide-react';
+import { ModeToggle } from '@/components/ui/moodToggler';
 
 const Navbar = () => {
   return (
@@ -22,6 +23,7 @@ const Navbar = () => {
             <BarChart3 className="h-4 w-4" />
             Borrow Summary
           </Link>
+          <ModeToggle />
         </div>
       </div>
     </nav>

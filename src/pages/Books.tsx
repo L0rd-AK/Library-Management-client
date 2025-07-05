@@ -40,8 +40,8 @@ export const BookList = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-center items-center py-12">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading books...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Loading books...</p>
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@ export const BookList = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12">
           <h3 className="text-lg font-medium text-red-600 mb-2">Error loading books</h3>
-          <p className="text-gray-600">Please try again later.</p>
+          <p className="text-gray-600 dark:text-gray-400">Please try again later.</p>
         </div>
       </div>
     );
@@ -62,18 +62,18 @@ export const BookList = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Books</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Books</h1>
         <AddBookModal />
       </div>
 
       {!books || books.length === 0 ? (
         <div className="text-center py-12">
           <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No books available</h3>
-          <p className="text-gray-600">Get started by adding your first book to the library.</p>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No books available</h3>
+          <p className="text-gray-600 dark:text-gray-400">Get started by adding your first book to the library.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
@@ -97,8 +97,8 @@ export const BookList = () => {
                   <TableCell>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       book.available 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
+                        ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' 
+                        : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
                     }`}>
                       {book.available ? 'Available' : 'Unavailable'}
                     </span>
