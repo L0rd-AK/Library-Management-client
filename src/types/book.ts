@@ -9,8 +9,12 @@ export interface IBook {
     available: boolean;
     createdAt?: string;
     updatedAt?: string;
-  }
-
+}
+export interface IBookResponse {
+  data: IBook;
+  success: boolean;
+  message?: string;
+}
 export interface IPagination{
   page: number;
   limit: number;

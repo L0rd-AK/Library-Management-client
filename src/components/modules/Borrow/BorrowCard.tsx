@@ -12,7 +12,7 @@ interface IProps {
 export default function BorrowCard({ borrow }: IProps) {
   const dispatch = useAppDispatch();
   console.log(borrow);
-  const isOverdue = new Date(borrow.returnDate) < new Date() && !borrow.returned;
+  const isOverdue = new Date(borrow.returnedDate || '') < new Date() && !borrow.returned;
   const isReturned = borrow.returned;
 
   const handleReturn = () => {
@@ -26,14 +26,14 @@ export default function BorrowCard({ borrow }: IProps) {
           <div className="flex items-center gap-2 mb-2">
             <BookOpen className="h-5 w-5 text-blue-600" />
             <h1 className="text-xl font-semibold text-gray-900">
-              {borrow.book.title}
+              {borrow.book?.title}
             </h1>
           </div>
           <div className="space-y-1 text-sm text-gray-600">
-            <p><span className="font-medium">Author:</span> {borrow.book.author}</p>
-            <p><span className="font-medium">ISBN:</span> {borrow.book.isbn}</p>
+            <p><span className="font-medium">Author:</span> {borrow.book?.author}</p>
+            <p><span className="font-medium">ISBN:</span> {borrow.book?.isbn}</p>
             <p><span className="font-medium">Copies Borrowed:</span> {borrow.quantity}</p>
-            <p><span className="font-medium">Borrow Date:</span> {new Date(borrow.book.createdAt).toLocaleDateString()}</p>
+            <p><span className="font-medium">Borrow Date:</span> {new Date(borrow.createdAt || '').toLocaleDateString()}</p>
             <p><span className="font-medium">Return Date:</span> {new Date(borrow.dueDate).toLocaleDateString()}</p>
             <p><span className="font-medium">Status:</span> 
               <span className={cn("ml-1 px-2 py-1 rounded-full text-xs font-medium", {

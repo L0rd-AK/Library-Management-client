@@ -1,17 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { IBook } from '@/types';
+import type { IBook, IBookResponse } from '@/types';
 
 // Define a service using a base URL and expected endpoints
 export const booksApi = createApi({
   reducerPath: 'booksApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api' }), // Update with your API base URL
-  tagTypes: ['Books'],
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api' }),
+  tagTypes: ['Books', 'Borrows'],
   endpoints: (builder) => ({
-    getBooks: builder.query<{ success: boolean; data: IBook[]; pagination: any }, void>({
+    getBooks: builder.query<{ success: boolean; data: IBook[]; pagination: { page: number; limit: number; total: number; totalPages: number; hasNext: boolean } }, void>({
       query: () => '/books',
-      providesTags: ['Books'],
+      providesTags: ['Books', 'Borrows'],
     }),
-    getBookById: builder.query<IBook, string>({
+    getBookById: builder.query<IBookResponse, string>({
       query: (id) => `/books/${id}`,
     }),
     addBook: builder.mutation<IBook, Omit<IBook, '_id'>>({

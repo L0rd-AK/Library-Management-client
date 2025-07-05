@@ -60,7 +60,7 @@ export default function BookCard({ book }: IProps) {
             </Button>
           </Link>
           <Button
-            onClick={() => dispatch(deleteBook(book._id))}
+            onClick={() => dispatch(deleteBook(book._id as string))}
             variant="outline"
             size="sm"
             className="text-red-600 hover:text-red-700"

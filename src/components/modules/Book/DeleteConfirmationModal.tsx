@@ -25,7 +25,7 @@ export function DeleteBookConfirmationModal({ book }: IProps) {
   const dispatch = useAppDispatch();
 
   const handleDelete = () => {
-    dispatch(deleteBook(book._id));
+    dispatch(deleteBook(book._id as string));
     setOpen(false);
   };
 

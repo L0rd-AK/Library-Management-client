@@ -28,7 +28,6 @@ const EditBook = () => {
   const { id } = useParams<{ id: string }>();
   const { data: book, isLoading, error } = useGetBookByIdQuery(id!);
   const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation();
-
   const {
     register,
     handleSubmit,
@@ -41,12 +40,12 @@ const EditBook = () => {
   useEffect(() => {
     if (book) {
       reset({
-        title: book.title,
-        author: book.author,
-        genre: book.genre,
-        isbn: book.isbn,
-        description: book.description,
-        copies: book.copies,
+        title: book.data.title,
+        author: book.data.author,
+        genre: book.data.genre,
+        isbn: book.data.isbn,
+        description: book.data.description,
+        copies: book.data.copies,
       });
     }
   }, [book, reset]);
@@ -56,7 +55,7 @@ const EditBook = () => {
 
     try {
       const bookData = {
-        ...book,
+        ...book.data,
         ...data,
         available: data.copies > 0,
       };
@@ -112,7 +111,8 @@ const EditBook = () => {
                   <Input
                     id="title"
                     {...register('title')}
-                    placeholder="Enter book title"
+                    placeholder="Enter Title"
+                    defaultValue={book.data.title}
                   />
                   {errors.title && (
                     <p className="text-sm text-red-600">{errors.title.message}</p>
@@ -125,6 +125,7 @@ const EditBook = () => {
                     id="author"
                     {...register('author')}
                     placeholder="Enter author name"
+                    defaultValue={book.data.author}
                   />
                   {errors.author && (
                     <p className="text-sm text-red-600">{errors.author.message}</p>
@@ -137,6 +138,7 @@ const EditBook = () => {
                     id="genre"
                     {...register('genre')}
                     placeholder="Enter genre"
+                    defaultValue={book.data.genre}
                   />
                   {errors.genre && (
                     <p className="text-sm text-red-600">{errors.genre.message}</p>
@@ -149,6 +151,7 @@ const EditBook = () => {
                     id="isbn"
                     {...register('isbn')}
                     placeholder="Enter ISBN"
+                    defaultValue={book.data.isbn}
                   />
                   {errors.isbn && (
                     <p className="text-sm text-red-600">{errors.isbn.message}</p>
@@ -163,6 +166,7 @@ const EditBook = () => {
                     {...register('copies', { valueAsNumber: true })}
                     placeholder="Enter number of copies"
                     min="0"
+                    defaultValue={book.data.copies}
                   />
                   {errors.copies && (
                     <p className="text-sm text-red-600">{errors.copies.message}</p>
@@ -177,6 +181,7 @@ const EditBook = () => {
                   {...register('description')}
                   placeholder="Enter book description"
                   rows={4}
+                  defaultValue={book.data.description}
                 />
                 {errors.description && (
                   <p className="text-sm text-red-600">{errors.description.message}</p>
