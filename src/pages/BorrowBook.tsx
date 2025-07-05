@@ -115,14 +115,14 @@ const BorrowBook = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
           <Link to="/">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Books
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Borrow Book</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Borrow Book</h1>
         </div>
 
         <div className="grid gap-6">
@@ -132,7 +132,7 @@ const BorrowBook = () => {
               <CardTitle>Book Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-medium text-gray-500">Title</Label>
                   <p className="text-lg font-semibold">{book.title}</p>
@@ -167,7 +167,7 @@ const BorrowBook = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="quantity">Quantity *</Label>
                     <Input
@@ -202,7 +202,7 @@ const BorrowBook = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button type="submit" className="flex-1" disabled={isLoading}>
                     {isLoading ? 'Borrowing...' : 'Borrow Book'}
                   </Button>

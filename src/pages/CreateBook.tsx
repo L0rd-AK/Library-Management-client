@@ -67,14 +67,14 @@ const CreateBook = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
           <Link to="/">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Books
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Add New Book</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">Add New Book</h1>
         </div>
 
         <Card>
@@ -86,7 +86,7 @@ const CreateBook = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="title">Title *</Label>
                   <Input
@@ -176,12 +176,12 @@ const CreateBook = () => {
                   )}
               </div>
 
-              <div className="flex gap-4">
-                <Button type="submit" disabled={isLoading}>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button type="submit" disabled={isLoading} className="flex-1 sm:flex-none">
                   {isLoading ? 'Creating...' : 'Create Book'}
                 </Button>
-                <Link to="/">
-                  <Button type="button" variant="outline">
+                <Link to="/" className="flex-1 sm:flex-none">
+                  <Button type="button" variant="outline" className="w-full">
                     Cancel
                   </Button>
                 </Link>

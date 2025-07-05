@@ -73,28 +73,105 @@ export const BookList = () => {
           <p className="text-gray-600 dark:text-gray-400">Get started by adding your first book to the library.</p>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Author</TableHead>
-                <TableHead>Genre</TableHead>
-                <TableHead>ISBN</TableHead>
-                <TableHead>Copies</TableHead>
-                <TableHead>Availability</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {books && books.map((book: IBook) => (
-                <TableRow key={book._id}>
-                  <TableCell className="font-medium">{book.title}</TableCell>
-                  <TableCell>{book.author}</TableCell>
-                  <TableCell>{book.genre}</TableCell>
-                  <TableCell>{book.isbn}</TableCell>
-                  <TableCell>{book.copies}</TableCell>
-                  <TableCell>
+        <>
+          {/* Desktop Table View */}
+          <div className="hidden lg:block bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Author</TableHead>
+                  <TableHead>Genre</TableHead>
+                  <TableHead>ISBN</TableHead>
+                  <TableHead>Copies</TableHead>
+                  <TableHead>Availability</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {books && books.map((book: IBook) => (
+                  <TableRow key={book._id}>
+                    <TableCell className="font-medium">{book.title}</TableCell>
+                    <TableCell>{book.author}</TableCell>
+                    <TableCell>{book.genre}</TableCell>
+                    <TableCell>{book.isbn}</TableCell>
+                    <TableCell>{book.copies}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        book.available 
+                          ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' 
+                          : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'
+                      }`}>
+                        {book.available ? 'Available' : 'Unavailable'}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Link to={`/edit-book/${book._id}`}>
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Link to={`/borrow/${book._id}`}>
+                          <Button variant="outline" size="sm" disabled={!book.available}>
+                            <BookOpen className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <AlertDialog open={deleteDialogOpen && bookToDelete?._id === book._id} onOpenChange={setDeleteDialogOpen}>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => handleDeleteClick(book)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Book</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete "{book.title}"? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700">
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="lg:hidden space-y-4">
+            {books && books.map((book: IBook) => (
+              <div key={book._id} className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg mb-1">
+                      {book.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">
+                      <span className="font-medium">Author:</span> {book.author}
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">
+                      <span className="font-medium">Genre:</span> {book.genre}
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-1">
+                      <span className="font-medium">ISBN:</span> {book.isbn}
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">
+                      <span className="font-medium">Copies:</span> {book.copies}
+                    </p>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       book.available 
                         ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' 
@@ -102,52 +179,52 @@ export const BookList = () => {
                     }`}>
                       {book.available ? 'Available' : 'Unavailable'}
                     </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Link to={`/edit-book/${book._id}`}>
-                        <Button variant="outline" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <Link to={`/borrow/${book._id}`}>
-                        <Button variant="outline" size="sm" disabled={!book.available}>
-                          <BookOpen className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <AlertDialog open={deleteDialogOpen && bookToDelete?._id === book._id} onOpenChange={setDeleteDialogOpen}>
-                        <AlertDialogTrigger asChild>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => handleDeleteClick(book)}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Book</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete "{book.title}"? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700">
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Link to={`/edit-book/${book._id}`} className="flex-1">
+                    <Button variant="outline" size="sm" className="w-full">
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                  </Link>
+                  <Link to={`/borrow/${book._id}`} className="flex-1">
+                    <Button variant="outline" size="sm" disabled={!book.available} className="w-full">
+                      <BookOpen className="h-4 w-4 mr-1" />
+                      Borrow
+                    </Button>
+                  </Link>
+                  <AlertDialog open={deleteDialogOpen && bookToDelete?._id === book._id} onOpenChange={setDeleteDialogOpen}>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleDeleteClick(book)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Book</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete "{book.title}"? This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700">
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
